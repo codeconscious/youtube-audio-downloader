@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Youtube_Downloader
 {
@@ -7,6 +8,13 @@ namespace Youtube_Downloader
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void OnButtonClick(object sender, RoutedEventArgs e)
+        {
+            var button = (Button) sender;
+
+            button.Content = "OK";
         }
     }
 }
