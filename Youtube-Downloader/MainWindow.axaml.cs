@@ -14,20 +14,32 @@ namespace Youtube_Downloader
         private void OnButtonClick(object sender, RoutedEventArgs e)
         {
             var button = (Button) sender;
-            var urlTextBox = this.FindControl<TextBox>("Url");
-            var url = urlTextBox.Text.Trim();
-            if (url.Length < 11)
+            var urlPartTextBox = this.FindControl<TextBox>("Url");
+            var urlPart = urlPartTextBox.Text.Trim();
+            if (urlPart.Length < 11)
             {
                 button.Content = "Too short!";
                 return;
             }
-            else if (url.Length > 11)
+            else if (urlPart.Length > 11)
             {
                 button.Content = "Too long!";
                 return;
             }
 
             button.Content = "Working...";
+
+            var baseArgs = "--extract-audio --audio-format mp3 --audio-quality 0";
+
+            var splitChapters = false; // TODO: Add to the UI.
+            if (splitChapters)
+                baseArgs += " --split-chapters";
+
+            var playlist = false; // TODO: Add to the UI.
+            if (playlist)
+                baseArgs += " --yes-playlist";
+
+            var baseUrl = $"\"https://www.youtube.com/watch?v={urlPart}\"";
 
             // Adapted from https://stackoverflow.com/a/1469790/11767771:
             // var process = new System.Diagnostics.Process();
@@ -45,7 +57,7 @@ namespace Youtube_Downloader
             var processInfo = new ProcessStartInfo()
             {
                 FileName = "yt-dlp",
-                Arguments = $"--extract-audio --audio-format mp3 --audio-quality 0 \"https://www.youtube.com/watch?v={url}\"",
+                Arguments = $"{baseArgs} {urlPart}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
