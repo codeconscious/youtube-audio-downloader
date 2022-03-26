@@ -39,7 +39,7 @@ namespace Youtube_Downloader
             if (playlist)
                 baseArgs += " --yes-playlist";
 
-            var baseUrl = $"\"https://www.youtube.com/watch?v={urlPart}\"";
+            var fullUrl = $"\"https://www.youtube.com/watch?v={urlPart}\"";
 
             // Adapted from https://stackoverflow.com/a/1469790/11767771:
             // var process = new System.Diagnostics.Process();
@@ -57,7 +57,7 @@ namespace Youtube_Downloader
             var processInfo = new ProcessStartInfo()
             {
                 FileName = "yt-dlp",
-                Arguments = $"{baseArgs} {urlPart}",
+                Arguments = $"{baseArgs} {fullUrl}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
