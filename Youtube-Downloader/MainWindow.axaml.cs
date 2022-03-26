@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -41,6 +42,15 @@ namespace Youtube_Downloader
 
             var fullUrl = $"\"https://www.youtube.com/watch?v={urlPart}\"";
 
+            // TODO: Should be selectable, maybe saveable.
+            string directory;
+            if (Directory.Exists("/Users/jd/Downloads/Music"))
+                directory = "/Users/jd/Downloads/Music";
+            else if (Directory.Exists("/home/jx/Downloads/music"))
+                directory = "/home/jx/Downloads/music";
+            else
+                throw new DirectoryNotFoundException();
+
             // Adapted from https://stackoverflow.com/a/1469790/11767771:
             // var process = new System.Diagnostics.Process();
             // var startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -61,7 +71,7 @@ namespace Youtube_Downloader
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
-                WorkingDirectory = "/Users/jd/Downloads/Music"
+                WorkingDirectory = directory
             };
 
             var process = Process.Start(processInfo);
