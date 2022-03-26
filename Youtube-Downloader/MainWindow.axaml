@@ -5,8 +5,9 @@
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="250"
         x:Class="Youtube_Downloader.MainWindow"
         Title="YouTube Downloader">
-    <StackPanel Orientation="Horizontal" Spacing="5" Height="20">
+    <StackPanel Orientation="Horizontal" Spacing="5" Height="30">
         <TextBlock Margin="4" Text="https://www.youtube.com/"></TextBlock>
         <TextBox Watermark="Enter URL part" Width="200" x:Name="Url"></TextBox>
+        <Button Width="100" Foreground="White" Background="Gray">Download</Button>
     </StackPanel>
 </Window>
