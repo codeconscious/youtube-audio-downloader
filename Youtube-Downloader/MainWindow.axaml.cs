@@ -54,9 +54,14 @@ namespace Youtube_Downloader
 
             var process = Process.Start(processInfo);
             process.WaitForExit();
-            button.Content = process.ExitCode == 0
-                ? "Done (OK)"
-                : $"Done (ERROR: {process.ExitCode})";
+            if (process.ExitCode == 0)
+            {
+                button.Content = "Saved!";
+            }
+            else
+            {
+                button.Content = $"ERROR: {process.ExitCode}";
+            }
         }
     }
 }
