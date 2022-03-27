@@ -2,13 +2,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" SizeToContent="3"
+        mc:Ignorable="d" SizeToContent="3" MinWidth="400" MinHeight="200"
         x:Class="Youtube_Downloader.MainWindow"
         Title="YouTube Downloader">
-    <StackPanel Orientation="Horizontal" Spacing="5" Height="30" Margin="20">
-        <TextBlock Margin="4" Text="https://www.youtube.com/v/"></TextBlock>
-        <TextBox Watermark="Enter URL part" Width="150" x:Name="Url"></TextBox>
-        <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick"
-                HorizontalContentAlignment="Center">Download</Button>
-    </StackPanel>
+
+    <Grid RowDefinitions="50,Auto" Margin="20" Background="red">
+        <!-- <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" Background="Red" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions> -->
+        <!-- <StackPanel Orientation="Horizontal" Spacing="5" Grid.Row="0" Grid.Column="0"> -->
+        <DockPanel LastChildFill="True">
+            <!-- <TextBlock Margin="4" Text="https://www.youtube.com/v/"></TextBlock> -->
+            <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick"
+                    HorizontalContentAlignment="Center" DockPanel.Dock="Right" Margin="5,0,0,0">Download</Button>
+            <TextBox Height="20" Watermark="Enter a YouTube URL or video ID"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="Url" />
+
+        </DockPanel>
+        <!-- <StackPanel Orientation="Horizontal" Spacing="5" Height="30" Margin="20" Grid.Row="1" Grid.Column="0"> -->
+        <DockPanel Grid.Row="1" Grid.Column="0" LastChildFill="True">
+            <!-- <ScrollViewer Grid.Row="1" Grid.Column="0" Height="500" AllowAutoHide="True"
+                          HorizontalScrollBarVisibility="1" VerticalScrollBarVisibility="1"> -->
+            <TextBlock Background="Orange" x:Name="Log" TextWrapping="1" Text="{Binding LogText, Mode=OneWay}" />
+            <ScrollBar Orientation="Vertical" DockPanel.Dock="Right" Visibility="Visible" ViewportSize="100" Value="0"></ScrollBar>
+            <!-- </ScrollViewer> -->
+            <!-- <TextBox x:Name="Log" Text="{Binding LogText, Mode=OneWay}" TextWrapping="Wrap" /> -->
+        <!-- </StackPanel> -->
+        </DockPanel>
+    </Grid>
 </Window>

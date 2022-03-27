@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -9,29 +10,40 @@ namespace Youtube_Downloader
 {
     public partial class MainWindow : Window
     {
+        // public string LogText { get; set; } = string.Empty;
+
         public MainWindow()
         {
             InitializeComponent();
+            // this.DataContext = this;
         }
 
         private void OnButtonClick(object sender, RoutedEventArgs e)
         {
             var button = (Button) sender;
             var urlPartTextBox = this.FindControl<TextBox>("Url");
-            var urlPart = urlPartTextBox.Text.Trim();
+            var log = this.FindControl<TextBlock>("Log");
+            // var log = this.FindControl<TextBox>("Log");
+            // LogText += $"Started at {System.DateTime.Now}...\n";
 
             // Extract the video ID from user input. IDs or entire URLs are accepted.
             const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}";
+            var urlPart = urlPartTextBox.Text?.Trim() ?? string.Empty;
             var match = Regex.Match(urlPart, pattern, RegexOptions.Compiled);
             if (!match.Success)
             {
                 // button.Background = new SolidColorBrush(Colors.Red);
-                button.Content = "Invalid URL!";
+                // button.Content = "Invalid URL!";
+                log.Text += $"{DateTime.Now}\tERROR: Video ID could not be parsed from \"{urlPart}\".\n";
+                // LogText += "ERROR: Video ID could not be parsed.\n";
                 // System.Threading.Tasks.Task.Delay(2000);
                 // button.Background = new SolidColorBrush(Colors.Black);
                 // button.Content = "Download";
                 return;
             }
+
+            log.Text += "Video ID parsed OK: " + match.Value + "\n";
+            // LogText += "Video ID parsed OK: " + match.Value + "\n";
 
             var fullUrl = $"\"https://www.youtube.com/watch?v={match.Value}\"";
 
