@@ -90,9 +90,10 @@ namespace Youtube_Downloader
             // button.Content = $"Done (code {exitCode})";
 
             // Mac-friendly version from https://stackoverflow.com/a/65676526/11767771:
+            const string processFileName = "yt-dlp";
             var processInfo = new ProcessStartInfo()
             {
-                FileName = "yt-dlp",
+                FileName = processFileName,
                 Arguments = $"{args} {fullUrl}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -100,8 +101,12 @@ namespace Youtube_Downloader
                 WorkingDirectory = directory
             };
 
-            var process = Process.Start(processInfo)
-                          ?? throw new InvalidDataException();
+            var process = Process.Start(processInfo);
+            if (process is null)
+            {
+                log.Text += $"ERROR: Could not start process {processFileName} -- is it installed?\n\n";
+                return;
+            }
             process.WaitForExit();
             if (process.ExitCode == 0)
             {
