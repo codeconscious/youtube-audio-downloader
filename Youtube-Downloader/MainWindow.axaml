@@ -8,6 +8,7 @@
     <StackPanel Orientation="Horizontal" Spacing="5" Height="30" Margin="20">
         <TextBlock Margin="4" Text="https://www.youtube.com/v/"></TextBlock>
         <TextBox Watermark="Enter URL part" Width="150" x:Name="Url"></TextBox>
-        <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick" HorizontalContentAlignment="Center">Download</Button>
+        <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick"
+                HorizontalContentAlignment="Center">Download</Button>
     </StackPanel>
 </Window>
