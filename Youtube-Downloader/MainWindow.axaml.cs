@@ -96,6 +96,9 @@ namespace Youtube_Downloader
             // var exitCode = process.ExitCode;
             // button.Content = $"Done (code {exitCode})";
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             // Mac-friendly version from https://stackoverflow.com/a/65676526/11767771:
             const string processFileName = "yt-dlp";
             log.Text += $"Command to run: {processFileName} {args} {fullUrl}\n";
@@ -116,6 +119,7 @@ namespace Youtube_Downloader
                 return;
             }
             process.WaitForExit();
+            log.Text += $"Done in {stopwatch.ElapsedMilliseconds:#,##0}ms";
             if (process.ExitCode == 0)
             {
                 log.Text += "Saved OK!\n\n";
