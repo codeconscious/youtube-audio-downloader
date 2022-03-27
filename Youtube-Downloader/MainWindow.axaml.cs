@@ -67,8 +67,6 @@ namespace Youtube_Downloader
                 log.Text += "Download Playlist is ON\n";
             }
 
-            log.Text += $"Command to run: {args} {fullUrl}\n";
-
             // TODO: Should be selectable, maybe saveable.
             string directory;
             if (Directory.Exists("/Users/jd/Downloads/Music"))
@@ -100,6 +98,7 @@ namespace Youtube_Downloader
 
             // Mac-friendly version from https://stackoverflow.com/a/65676526/11767771:
             const string processFileName = "yt-dlp";
+            log.Text += $"Command to run: {processFileName} {args} {fullUrl}\n";
             var processInfo = new ProcessStartInfo()
             {
                 FileName = processFileName,
