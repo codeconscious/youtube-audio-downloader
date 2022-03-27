@@ -7,15 +7,24 @@
         Title="YouTube Downloader">
 
     <Grid RowDefinitions="50,Auto" Margin="20">
+
         <DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="True">
             <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick"
                     HorizontalContentAlignment="Center" DockPanel.Dock="Right" Margin="5,0,0,0">Download</Button>
             <TextBox Height="20" Watermark="Enter a YouTube URL or video ID"
                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="Url" />
         </DockPanel>
-        <DockPanel Grid.Row="1" Grid.Column="0" LastChildFill="True">
-            <TextBlock x:Name="Log" TextWrapping="1"
-                       Text="{Binding LogText, Mode=OneWay}" />
-        </DockPanel>
+
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Height="400">
+                <TextBlock Grid.Column="0" x:Name="Log" TextWrapping="1"
+                           Text="{Binding LogText, Mode=OneWay}" />
+            </ScrollViewer>
+        </Grid>
+
     </Grid>
 </Window>
