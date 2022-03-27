@@ -20,9 +20,12 @@ namespace Youtube_Downloader
 
         private void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            var button = (Button) sender;
+            //var button = (Button) sender;
+            //button.IsEnabled = false;
+
             var urlPartTextBox = this.FindControl<TextBox>("Url");
             var log = this.FindControl<TextBlock>("Log");
+            log.Text = string.Empty;
             // var log = this.FindControl<TextBox>("Log");
             // LogText += $"Started at {System.DateTime.Now}...\n";
 
@@ -111,6 +114,7 @@ namespace Youtube_Downloader
             if (process.ExitCode == 0)
             {
                 log.Text += "Saved OK!\n\n";
+                urlPartTextBox.Text = string.Empty;
             }
             else
             {
