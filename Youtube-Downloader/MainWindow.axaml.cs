@@ -53,13 +53,19 @@ namespace Youtube_Downloader
 
             var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
-            var splitChapters = false; // TODO: Add to the UI.
-            if (splitChapters)
+            var splitChapters = this.FindControl<CheckBox>("SplitChapters");
+            if (splitChapters?.IsChecked == true)
+            {
                 args += " --split-chapters";
+                log.Text += "Split Chapters is ON\n";
+            }
 
-            var playlist = false; // TODO: Add to the UI.
-            if (playlist)
+            var playlist = this.FindControl<CheckBox>("DownloadPlaylist");
+            if (playlist?.IsChecked == true)
+            {
                 args += " --yes-playlist";
+                log.Text += "Download Playlist is ON\n";
+            }
 
             log.Text += $"Command to run: {args} {fullUrl}\n";
 
