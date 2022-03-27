@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" SizeToContent="3" MinWidth="600" MinHeight="200"
+        mc:Ignorable="d" SizeToContent="0" Width="700" Height="300" MinWidth="700" MinHeight="300"
         x:Class="Youtube_Downloader.MainWindow"
         Title="YouTube Downloader">
 
@@ -10,7 +10,8 @@
 
         <DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="True">
             <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick"
-                    HorizontalContentAlignment="Center" DockPanel.Dock="Right" Margin="5,0,0,0">Download</Button>
+                    HorizontalContentAlignment="Center" DockPanel.Dock="Right"
+                    Margin="5,0,0,0">Download</Button>
             <TextBox Height="20" Watermark="Enter a YouTube URL or video ID"
                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="Url" />
         </DockPanel>
