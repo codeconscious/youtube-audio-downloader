@@ -34,7 +34,7 @@ namespace Youtube_Downloader
             {
                 // button.Background = new SolidColorBrush(Colors.Red);
                 // button.Content = "Invalid URL!";
-                log.Text += $"{DateTime.Now}\tERROR: Video ID could not be parsed from \"{urlPart}\".\n";
+                log.Text += $"ERROR: Video ID could not be parsed from \"{urlPart}\".\n";
                 // LogText += "ERROR: Video ID could not be parsed.\n";
                 // System.Threading.Tasks.Task.Delay(2000);
                 // button.Background = new SolidColorBrush(Colors.Black);
@@ -47,8 +47,6 @@ namespace Youtube_Downloader
 
             var fullUrl = $"\"https://www.youtube.com/watch?v={match.Value}\"";
 
-            button.Content = "Working..."; // This doesn't work for some reason...
-
             var baseArgs = "--extract-audio --audio-format mp3 --audio-quality 0";
 
             var splitChapters = false; // TODO: Add to the UI.
@@ -59,6 +57,8 @@ namespace Youtube_Downloader
             if (playlist)
                 baseArgs += " --yes-playlist";
 
+            log.Text += $"Command to run: {baseArgs} {fullUrl}\n";
+
             // TODO: Should be selectable, maybe saveable.
             string directory;
             if (Directory.Exists("/Users/jd/Downloads/Music"))
@@ -67,6 +67,7 @@ namespace Youtube_Downloader
                 directory = "/home/jx/Downloads/music";
             else
                 throw new DirectoryNotFoundException();
+            log.Text += $"Saving to directory \"{directory}\"\n";
 
             // Adapted from https://stackoverflow.com/a/1469790/11767771:
             // var process = new System.Diagnostics.Process();
@@ -96,11 +97,11 @@ namespace Youtube_Downloader
             process.WaitForExit();
             if (process.ExitCode == 0)
             {
-                button.Content = "Saved!";
+                log.Text += "Saved OK!\n\n";
             }
             else
             {
-                button.Content = $"ERROR: {process.ExitCode}";
+                log.Text += $"ERROR: Could not process the file (error code {process.ExitCode})\n\n";
             }
         }
     }
