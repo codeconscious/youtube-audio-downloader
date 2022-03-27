@@ -28,17 +28,18 @@ namespace Youtube_Downloader
 
             // Extract the video ID from user input. IDs or entire URLs are accepted.
             const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}";
-            var urlPart = urlPartTextBox.Text?.Trim() ?? string.Empty;
-            var match = Regex.Match(urlPart, pattern, RegexOptions.Compiled);
+            var urlPart = urlPartTextBox.Text;
+
+            if (urlPart is null)
+            {
+                log.Text += "ERROR: A URL or video ID must be entered\n";
+                return;
+            }
+
+            var match = Regex.Match(urlPart.Trim(), pattern, RegexOptions.Compiled);
             if (!match.Success)
             {
-                // button.Background = new SolidColorBrush(Colors.Red);
-                // button.Content = "Invalid URL!";
-                log.Text += $"ERROR: Video ID could not be parsed from \"{urlPart}\".\n";
-                // LogText += "ERROR: Video ID could not be parsed.\n";
-                // System.Threading.Tasks.Task.Delay(2000);
-                // button.Background = new SolidColorBrush(Colors.Black);
-                // button.Content = "Download";
+                log.Text += $"ERROR: Video ID could not be parsed from \"{urlPart}\"\n";
                 return;
             }
 
@@ -47,27 +48,34 @@ namespace Youtube_Downloader
 
             var fullUrl = $"\"https://www.youtube.com/watch?v={match.Value}\"";
 
-            var baseArgs = "--extract-audio --audio-format mp3 --audio-quality 0";
+            var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
             var splitChapters = false; // TODO: Add to the UI.
             if (splitChapters)
-                baseArgs += " --split-chapters";
+                args += " --split-chapters";
 
             var playlist = false; // TODO: Add to the UI.
             if (playlist)
-                baseArgs += " --yes-playlist";
+                args += " --yes-playlist";
 
-            log.Text += $"Command to run: {baseArgs} {fullUrl}\n";
+            log.Text += $"Command to run: {args} {fullUrl}\n";
 
             // TODO: Should be selectable, maybe saveable.
             string directory;
             if (Directory.Exists("/Users/jd/Downloads/Music"))
+            {
                 directory = "/Users/jd/Downloads/Music";
+            }
             else if (Directory.Exists("/home/jx/Downloads/music"))
+            {
                 directory = "/home/jx/Downloads/music";
+            }
             else
-                throw new DirectoryNotFoundException();
-            log.Text += $"Saving to directory \"{directory}\"\n";
+            {
+                log.Text += $"ERROR: Couldn't find a save directory\n";
+                return;
+            }
+            log.Text += $"Will save to directory \"{directory}\"\n";
 
             // Adapted from https://stackoverflow.com/a/1469790/11767771:
             // var process = new System.Diagnostics.Process();
@@ -85,7 +93,7 @@ namespace Youtube_Downloader
             var processInfo = new ProcessStartInfo()
             {
                 FileName = "yt-dlp",
-                Arguments = $"{baseArgs} {fullUrl}",
+                Arguments = $"{args} {fullUrl}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
@@ -101,7 +109,7 @@ namespace Youtube_Downloader
             }
             else
             {
-                log.Text += $"ERROR: Could not process the file (error code {process.ExitCode})\n\n";
+                log.Text += $"ERROR: Could not download the video (error code {process.ExitCode})\n\n";
             }
         }
     }
