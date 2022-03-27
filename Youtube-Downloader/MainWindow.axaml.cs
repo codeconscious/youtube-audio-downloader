@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace Youtube_Downloader
 {
@@ -17,18 +19,23 @@ namespace Youtube_Downloader
             var button = (Button) sender;
             var urlPartTextBox = this.FindControl<TextBox>("Url");
             var urlPart = urlPartTextBox.Text.Trim();
-            if (urlPart.Length < 11)
+
+            // Extract the video ID from user input. IDs or entire URLs are accepted.
+            const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}";
+            var match = Regex.Match(urlPart, pattern, RegexOptions.Compiled);
+            if (!match.Success)
             {
-                button.Content = "Too short!";
-                return;
-            }
-            else if (urlPart.Length > 11)
-            {
-                button.Content = "Too long!";
+                // button.Background = new SolidColorBrush(Colors.Red);
+                button.Content = "Invalid URL!";
+                // System.Threading.Tasks.Task.Delay(2000);
+                // button.Background = new SolidColorBrush(Colors.Black);
+                // button.Content = "Download";
                 return;
             }
 
-            button.Content = "Working...";
+            var fullUrl = $"\"https://www.youtube.com/watch?v={match.Value}\"";
+
+            button.Content = "Working..."; // This doesn't work for some reason...
 
             var baseArgs = "--extract-audio --audio-format mp3 --audio-quality 0";
 
@@ -39,8 +46,6 @@ namespace Youtube_Downloader
             var playlist = false; // TODO: Add to the UI.
             if (playlist)
                 baseArgs += " --yes-playlist";
-
-            var fullUrl = $"\"https://www.youtube.com/watch?v={urlPart}\"";
 
             // TODO: Should be selectable, maybe saveable.
             string directory;
@@ -74,7 +79,8 @@ namespace Youtube_Downloader
                 WorkingDirectory = directory
             };
 
-            var process = Process.Start(processInfo);
+            var process = Process.Start(processInfo)
+                          ?? throw new InvalidDataException();
             process.WaitForExit();
             if (process.ExitCode == 0)
             {
