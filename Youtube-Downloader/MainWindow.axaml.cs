@@ -73,6 +73,10 @@ namespace Youtube_Downloader
             {
                 directory = "/Users/jd/Downloads/Music";
             }
+            else if (Directory.Exists("/home/jd/Downloads/Music/"))
+            {
+                directory = "/home/jd/Downloads/Music/";
+            }
             else if (Directory.Exists("/home/jx/Downloads/music"))
             {
                 directory = "/home/jx/Downloads/music";
@@ -119,7 +123,7 @@ namespace Youtube_Downloader
                 return;
             }
             process.WaitForExit();
-            log.Text += $"Done in {stopwatch.ElapsedMilliseconds:#,##0}ms";
+            log.Text += $"Done in {stopwatch.ElapsedMilliseconds:#,##0}ms\n";
             if (process.ExitCode == 0)
             {
                 log.Text += "Saved OK!\n\n";
