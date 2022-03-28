@@ -11,6 +11,7 @@ namespace Youtube_Downloader
     public partial class MainWindow : Window
     {
         // public string LogText { get; set; } = string.Empty;
+        // public string SaveFolder { get; set; } = string.Empty;
 
         public MainWindow()
         {
@@ -18,7 +19,7 @@ namespace Youtube_Downloader
             // this.DataContext = this;
         }
 
-        private void OnButtonClick(object sender, RoutedEventArgs e)
+        private void OnDownloadButton_Click(object sender, RoutedEventArgs e)
         {
             //var button = (Button) sender;
             //button.IsEnabled = false;
@@ -67,25 +68,19 @@ namespace Youtube_Downloader
                 log.Text += "Download Playlist is ON\n";
             }
 
-            // TODO: Should be selectable, maybe saveable.
+            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
             string directory;
-            if (Directory.Exists("/Users/jd/Downloads/Music"))
+            if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
-                directory = "/Users/jd/Downloads/Music";
-            }
-            else if (Directory.Exists("/home/jd/Downloads/Music/"))
-            {
-                directory = "/home/jd/Downloads/Music/";
-            }
-            else if (Directory.Exists("/home/jx/Downloads/music"))
-            {
-                directory = "/home/jx/Downloads/music";
-            }
-            else
-            {
-                log.Text += $"ERROR: Couldn't find a save directory\n";
+                log.Text += "ERROR: You must enter a folder path.";
                 return;
             }
+            if (!Directory.Exists(saveFolderTextBox.Text.Trim()))
+            {
+                log.Text += $"ERROR: Could not find directory \"{saveFolderTextBox.Text.Trim()}\"";
+                return;
+            }
+            directory = saveFolderTextBox.Text.Trim();
             log.Text += $"Will save to directory \"{directory}\"\n";
 
             // Adapted from https://stackoverflow.com/a/1469790/11767771:

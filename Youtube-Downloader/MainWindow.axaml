@@ -2,14 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" SizeToContent="0" Width="700" Height="300" MinWidth="700" MinHeight="300"
+        mc:Ignorable="d" SizeToContent="0" Width="700" Height="500" MinWidth="700" MinHeight="300"
         x:Class="Youtube_Downloader.MainWindow"
         Title="YouTube Downloader">
 
-    <Grid RowDefinitions="50,50,Auto" Margin="20">
+    <Grid RowDefinitions="50,50,50,Auto" Margin="20">
 
         <DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="True">
-            <Button Width="130" Foreground="White" Background="Black" Click="OnButtonClick"
+            <Button Width="130" Foreground="White" Background="Black" Click="OnDownloadButton_Click"
                     HorizontalContentAlignment="Center" DockPanel.Dock="Right"
                     Margin="5,0,0,0">Download</Button>
             <TextBox Height="20" Watermark="Enter a YouTube URL or video ID"
@@ -21,12 +21,19 @@
             <CheckBox x:Name="DownloadPlaylist">Download Playlist</CheckBox>
         </StackPanel>
 
-        <Grid Grid.Row="2" Grid.Column="0" Margin="0, 10, 0, 0">
+        <DockPanel Grid.Row="2" Grid.Column="0" Height="20" LastChildFill="True">
+            <!-- <Button Content="Choose folder..." Height="30" Name="FolderSelectButton"
+                    DockPanel.Dock="Left" Margin="0,0,5,0" Click="OnFolderSelectButton_Click" /> -->
+            <TextBox x:Name="SaveFolder" TextWrapping="1" Height="30" Watermark="Enter a folder path"
+                       Text="{Binding SaveFolder, Mode=OneWay}" />
+        </DockPanel>
+
+        <Grid Grid.Row="3" Grid.Column="0" Margin="0, 10, 0, 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <ScrollViewer Height="400">
+            <ScrollViewer Height="300">
                 <TextBlock Grid.Column="0" x:Name="Log" TextWrapping="1"
                            Text="{Binding LogText, Mode=OneWay}" Foreground="Gray" />
             </ScrollViewer>
