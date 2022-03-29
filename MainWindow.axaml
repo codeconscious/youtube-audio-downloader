@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" SizeToContent="0" Width="700" Height="500" MinWidth="700" MinHeight="500"
         x:Class="Youtube_Downloader.MainWindow"
-        Title="YouTube Downloader">
+        Title="YouTube Downloader" Icon="icon.png">
 
     <Grid RowDefinitions="50,50,50,Auto" Margin="20">
 
