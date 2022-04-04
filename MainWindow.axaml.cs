@@ -31,7 +31,7 @@ namespace Youtube_Downloader
             // LogText += $"Started at {System.DateTime.Now}...\n";
 
             // Extract the video ID from user input. IDs or entire URLs are accepted.
-            const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}";
+            const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
             var urlPart = urlPartTextBox.Text;
 
             if (urlPart is null)
