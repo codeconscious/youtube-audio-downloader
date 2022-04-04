@@ -21,9 +21,6 @@ namespace Youtube_Downloader
 
         private void OnDownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            //var button = (Button) sender;
-            //button.IsEnabled = false;
-
             var urlPartTextBox = this.FindControl<TextBox>("Url");
             var log = this.FindControl<TextBlock>("Log");
             log.Text = string.Empty;
@@ -46,11 +43,30 @@ namespace Youtube_Downloader
                 log.Text += $"ERROR: Video ID could not be parsed from \"{urlPart}\"\n";
                 return;
             }
-
-            log.Text += "Video ID parsed OK: " + match.Value + "\n";
+            var videoId = match.Value;
+            log.Text += "Video ID parsed OK: " + videoId + "\n";
             // LogText += "Video ID parsed OK: " + match.Value + "\n";
 
-            var fullUrl = $"\"https://www.youtube.com/watch?v={match.Value}\"";
+            var downloadExitCodeOrNull = DownloadVideo(videoId);
+            if (downloadExitCodeOrNull is null)
+            {
+                log.Text += "ERROR: An unexpected error occurred.";
+            }
+            if (downloadExitCodeOrNull == 0) // Success
+            {
+                log.Text += "Saved OK!";
+                urlPartTextBox.Text = string.Empty;
+            }
+            else
+            {
+                log.Text += $"ERROR: Could not download the video (error code {downloadExitCodeOrNull.ToString() ?? "NULL"})\n\n";
+            }
+        }
+
+        private int? DownloadVideo(string videoId)
+        {
+            var log = this.FindControl<TextBlock>("Log"); // TODO: Do correctly.
+            var fullUrl = $"\"https://www.youtube.com/watch?v={videoId}\"";
 
             var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
@@ -73,12 +89,12 @@ namespace Youtube_Downloader
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
                 log.Text += "ERROR: You must enter a folder path.";
-                return;
+                return null;
             }
             if (!Directory.Exists(saveFolderTextBox.Text.Trim()))
             {
                 log.Text += $"ERROR: Could not find directory \"{saveFolderTextBox.Text.Trim()}\"";
-                return;
+                return null;
             }
             directory = saveFolderTextBox.Text.Trim();
             log.Text += $"Will save to directory \"{directory}\"\n";
@@ -115,19 +131,16 @@ namespace Youtube_Downloader
             if (process is null)
             {
                 log.Text += $"ERROR: Could not start process {processFileName} -- is it installed?\n\n";
-                return;
+                return null;
             }
             process.WaitForExit();
             log.Text += $"Done in {stopwatch.ElapsedMilliseconds:#,##0}ms\n";
-            if (process.ExitCode == 0)
-            {
-                log.Text += "Saved OK!\n\n";
-                urlPartTextBox.Text = string.Empty;
-            }
-            else
-            {
-                log.Text += $"ERROR: Could not download the video (error code {process.ExitCode})\n\n";
-            }
+            return process.ExitCode;
+        }
+
+        private void RenameFile(string videoId, string path)
+        {
+            //var a = System.IO.Directory.EnumerateFiles(path, $"*{videoId}*");
         }
     }
 }
