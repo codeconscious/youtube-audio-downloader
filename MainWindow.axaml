@@ -2,11 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" SizeToContent="0" Width="700" Height="500" MinWidth="700" MinHeight="500"
+        mc:Ignorable="d" SizeToContent="0" Width="700" Height="600" MinWidth="700" MinHeight="500"
         x:Class="Youtube_Downloader.MainWindow"
         Title="YouTube Downloader" Icon="icon.png">
 
-    <Grid RowDefinitions="50,50,50,Auto" Margin="20">
+    <Grid RowDefinitions="50,50,50,50,Auto" Margin="20">
 
         <DockPanel Grid.Row="0" Grid.Column="0" LastChildFill="True">
             <Button Width="130" Foreground="White" Background="Black" Click="OnDownloadButton_Click"
@@ -29,7 +29,15 @@
                        Text="{Binding SaveFolder, Mode=OneWay}" />
         </DockPanel>
 
-        <Grid Grid.Row="3" Grid.Column="0" Margin="0, 10, 0, 0">
+        <DockPanel Grid.Row="3" Grid.Column="0" Height="20" LastChildFill="True">
+            <!-- <Button Content="Choose folder..." Height="30" Name="FolderSelectButton"
+                    DockPanel.Dock="Left" Margin="0,0,5,0" Click="OnFolderSelectButton_Click" /> -->
+            <TextBlock x:Name="FileNameLabel" Text="(Optional) Rename File To:" Margin="0,0,10,0" TextWrapping="0" />
+            <TextBox x:Name="FileName" TextWrapping="1" Height="30" Watermark="Enter a new file name (no extension)"
+                       Text="{Binding FileName, Mode=OneWay}" />
+        </DockPanel>
+
+        <Grid Grid.Row="4" Grid.Column="0" Margin="0, 10, 0, 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
