@@ -96,12 +96,12 @@ namespace Youtube_Downloader
             string directory;
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
-                log.Text += "ERROR: You must enter a folder path.";
+                log.Text += "ERROR: You must enter a folder path.\n";
                 return null;
             }
             if (!Directory.Exists(saveFolderTextBox.Text.Trim()))
             {
-                log.Text += $"ERROR: Could not find directory \"{saveFolderTextBox.Text.Trim()}\"";
+                log.Text += $"ERROR: Could not find directory \"{saveFolderTextBox.Text.Trim()}\"\n";
                 return null;
             }
             directory = saveFolderTextBox.Text.Trim();
