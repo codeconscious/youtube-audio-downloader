@@ -64,11 +64,14 @@ namespace Youtube_Downloader
                 log.Text += $"ERROR: Could not download the video (error code {downloadExitCodeOrNull.ToString() ?? "NULL"})\n\n";
             }
 
+            // Rename, if requested.
             var newFileName = this.FindControl<TextBox>("FileName");
             var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
             if (string.IsNullOrWhiteSpace(newFileName?.Text))
                 return;
+
             RenameFile(videoId, saveFolderTextBox.Text, newFileName.Text);
+            newFileName.Text = string.Empty;
         }
 
         private int? DownloadVideo(string videoId)
@@ -92,8 +95,8 @@ namespace Youtube_Downloader
                 log.Text += "Download Playlist is ON\n";
             }
 
-            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
             string directory;
+            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
                 log.Text += "ERROR: You must enter a folder path.\n";
@@ -107,22 +110,9 @@ namespace Youtube_Downloader
             directory = saveFolderTextBox.Text.Trim();
             log.Text += $"Will save to directory \"{directory}\"\n";
 
-            // Adapted from https://stackoverflow.com/a/1469790/11767771:
-            // var process = new System.Diagnostics.Process();
-            // var startInfo = new System.Diagnostics.ProcessStartInfo();
-            // startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            // startInfo.FileName = "cmd.exe"; // Windows only
-            // startInfo.Arguments = $"/C yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 \"https://www.youtube.com/watch?v={url}\"";
-            // process.StartInfo = startInfo;
-            // process.Start();
-            // process.WaitForExit();
-            // var exitCode = process.ExitCode;
-            // button.Content = $"Done (code {exitCode})";
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            // Mac-friendly version from https://stackoverflow.com/a/65676526/11767771:
             const string processFileName = "yt-dlp";
             log.Text += $"Command to run: {processFileName} {args} {fullUrl}\n";
             var processInfo = new ProcessStartInfo()
@@ -146,6 +136,12 @@ namespace Youtube_Downloader
             return process.ExitCode;
         }
 
+        /// <summary>
+        /// Renames a single download file. Does nothing if there are multiple matching files.
+        /// </summary>
+        /// <param name="videoId"></param>
+        /// <param name="directory"></param>
+        /// <param name="newFileName"></param>
         private void RenameFile(string videoId, string directory, string newFileName)
         {
             GuardClauses();
