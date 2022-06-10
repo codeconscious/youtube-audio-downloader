@@ -165,6 +165,7 @@ namespace Youtube_Downloader
             if (foundFiles.Count > 1)
             {
                 // Error, and print filenames
+                log.Text += $"ERROR: Cannot rename multiple files (yet).\n";
                 log.Text += $"{foundFiles.Count} files containing \"{videoId}\" in their names were found:\n";
                 foundFiles.ForEach(f => log.Text += "- " + f + "\n");
                 return;
