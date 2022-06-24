@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using System.Threading.Tasks;
 
 namespace Youtube_Downloader
 {
@@ -21,7 +22,7 @@ namespace Youtube_Downloader
             // this.DataContext = this;
         }
 
-        private void OnDownloadButton_Click(object sender, RoutedEventArgs e)
+        private async void OnDownloadButton_Click(object sender, RoutedEventArgs e)
         {
             var urlPartTextBox = this.FindControl<TextBox>("Url");
             var log = this.FindControl<TextBlock>("Log");
@@ -31,6 +32,7 @@ namespace Youtube_Downloader
 
             // Extract the video ID from user input. IDs or entire URLs are accepted.
             const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
+
             var urlPart = urlPartTextBox.Text;
 
             if (urlPart is null)
@@ -49,7 +51,7 @@ namespace Youtube_Downloader
             log.Text += "Video ID parsed OK: " + videoId + "\n";
             // LogText += "Video ID parsed OK: " + match.Value + "\n";
 
-            var downloadExitCodeOrNull = DownloadVideo(videoId);
+            var downloadExitCodeOrNull = await DownloadVideoAsync(videoId);
             if (downloadExitCodeOrNull is null)
             {
                 log.Text += "ERROR: An unexpected error occurred.";
@@ -74,7 +76,7 @@ namespace Youtube_Downloader
             newFileName.Text = string.Empty;
         }
 
-        private int? DownloadVideo(string videoId)
+        private async Task<int?> DownloadVideoAsync(string videoId)
         {
             var log = this.FindControl<TextBlock>("Log"); // TODO: Do correctly.
             var fullUrl = $"\"https://www.youtube.com/watch?v={videoId}\"";
@@ -125,7 +127,7 @@ namespace Youtube_Downloader
                 WorkingDirectory = directory
             };
 
-            var process = Process.Start(processInfo);
+            var process = await Task.Run(() => Process.Start(processInfo));
             if (process is null)
             {
                 log.Text += $"ERROR: Could not start process {processFileName} -- is it installed?\n\n";
@@ -160,8 +162,7 @@ namespace Youtube_Downloader
 
             if (foundFiles.Count > 1)
             {
-                // Error, and print filenames
-                log.Text += $"ERROR: Cannot rename multiple files (yet).\n";
+                log.Text += "ERROR: Cannot rename multiple files (yet).\n";
                 log.Text += $"{foundFiles.Count} files containing \"{videoId}\" in their names were found:\n";
                 foundFiles.ForEach(f => log.Text += "- " + f + "\n");
                 return;
@@ -175,7 +176,7 @@ namespace Youtube_Downloader
             }
             catch (Exception ex)
             {
-                 log.Text += $"RENAMING ERROR: " + ex.Message + "\n";
+                 log.Text += $"RENAMING ERROR: {ex.Message}\n";
                  return;
             }
 
