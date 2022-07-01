@@ -13,6 +13,7 @@ namespace Youtube_Downloader
 {
     public partial class MainWindow : Window
     {
+        // TODO: Get binding working.
         // public string LogText { get; set; } = string.Empty;
         // public string SaveFolder { get; set; } = string.Empty;
 
@@ -20,6 +21,7 @@ namespace Youtube_Downloader
         {
             InitializeComponent();
             // this.DataContext = this;
+
         }
 
         private async void OnDownloadButton_Click(object sender, RoutedEventArgs e)
@@ -27,8 +29,16 @@ namespace Youtube_Downloader
             var urlPartTextBox = this.FindControl<TextBox>("Url");
             var log = this.FindControl<TextBlock>("Log");
             log.Text = string.Empty;
+            // TODO: Get binding working.
             // var log = this.FindControl<TextBox>("Log");
             // LogText += $"Started at {System.DateTime.Now}...\n";
+
+            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
+            if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
+            {
+                log.Text += "ERROR: An output directory must be entered\n";
+                return;
+            }
 
             // Extract the video ID from user input. IDs or entire URLs are accepted.
             const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
@@ -55,6 +65,7 @@ namespace Youtube_Downloader
             if (downloadExitCodeOrNull is null)
             {
                 log.Text += "ERROR: An unexpected error occurred.";
+                return;
             }
             if (downloadExitCodeOrNull == 0) // Success
             {
@@ -63,12 +74,12 @@ namespace Youtube_Downloader
             }
             else
             {
-                log.Text += $"ERROR: Could not download the video (error code {downloadExitCodeOrNull.ToString() ?? "NULL"})\n\n";
+                log.Text += $"ERROR: Could not download the video (error code {downloadExitCodeOrNull.ToString() ?? "unknown"}).\n\n";
+                return;
             }
 
             // Rename, if requested.
             var newFileName = this.FindControl<TextBox>("FileName");
-            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
             if (string.IsNullOrWhiteSpace(newFileName?.Text))
                 return;
 
