@@ -22,6 +22,17 @@ namespace Youtube_Downloader
             InitializeComponent();
             // this.DataContext = this;
 
+            // Auto-populate the save (output) directory, if available.
+            const string fileContainingSavePath = "default-output-folder.txt";
+            if (File.Exists(fileContainingSavePath))
+            {
+                var pathData = File.ReadAllText(fileContainingSavePath).Trim();
+                if (Directory.Exists(pathData))
+                {
+                    var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
+                    saveFolderTextBox.Text = pathData;
+                }
+            }
         }
 
         private async void OnDownloadButton_Click(object sender, RoutedEventArgs e)

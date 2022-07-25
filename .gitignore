@@ -3,6 +3,7 @@
 *.profraw
 .DS_Store
 .idea/
+default-output-folder.txt
 
 
 
