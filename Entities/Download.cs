@@ -4,7 +4,7 @@ namespace YoutubeDownloader.Entities;
 
 public abstract class Download
 {
-    public string Name { get; }
+    public virtual string Name { get; }
     public string UrlBase { get; }
     public string FullUrl => $"\"{UrlBase}{ParsedData.Id}\"";
     public ParsedMediaId ParsedData { get; }

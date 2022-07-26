@@ -4,7 +4,7 @@ namespace YoutubeDownloader.Entities;
 
 public sealed class PlaylistDownload : Download
 {
-    public string Name => "Playlist";
+    public override string Name => "Playlist";
     public static string Pattern => @"(?<=list=)[\w\-]+";
     public static  string UrlBase => "https://www.youtube.com/playlist?list=";
 
