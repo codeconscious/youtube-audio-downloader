@@ -52,7 +52,7 @@ namespace Youtube_Downloader
             }
 
             // Extract the video ID from user input. IDs or entire URLs are accepted.
-            const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
+            const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}|(?<=list=)[\w]+";
 
             var urlPart = urlPartTextBox.Text;
 
@@ -65,12 +65,12 @@ namespace Youtube_Downloader
             var match = Regex.Match(urlPart.Trim(), pattern, RegexOptions.Compiled);
             if (!match.Success)
             {
-                log.Text += $"ERROR: Video ID could not be parsed from \"{urlPart}\"\n";
+                log.Text += $"ERROR: ID could not be parsed from \"{urlPart}\"\n";
                 return;
             }
             var videoId = match.Value;
-            log.Text += "Video ID parsed OK: " + videoId + "\n";
-            // LogText += "Video ID parsed OK: " + match.Value + "\n";
+            log.Text += "ID parsed OK: " + videoId + "\n";
+            // LogText += "ID parsed OK: " + match.Value + "\n";
 
             var downloadExitCodeOrNull = await DownloadVideoAsync(videoId);
             if (downloadExitCodeOrNull is null)
