@@ -15,5 +15,4 @@ Feel free to use it, but please do so responsibly!
 ## TODO
 
 - Better UI responsiveness during long operations
-- Save the last output directory
 - Check into Asian language support
