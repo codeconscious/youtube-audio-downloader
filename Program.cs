@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 
-namespace Youtube_Downloader
+namespace YoutubeDownloader
 {
     class Program
     {

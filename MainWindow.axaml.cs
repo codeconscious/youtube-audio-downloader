@@ -8,10 +8,11 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using System.Threading.Tasks;
+using YoutubeDownloader.Entities;
 
 // Technically, the external download tool handles far more than just YouTube.
 // I might add wider support at some point, but I have no need right now.
-namespace Youtube_Downloader
+namespace YoutubeDownloader
 {
     public partial class MainWindow : Window
     {
@@ -52,9 +53,6 @@ namespace Youtube_Downloader
             var urlPartTextBox = GetControl<TextBox>("Url");
             var log = GetControl<TextBlock>("Log");
             log.Text = string.Empty;
-            // TODO: Get binding working.
-            // var log = GetControlOrThrow<TextBox>("Log");
-            // LogText += $"Started at {System.DateTime.Now}...\n";
 
             var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
@@ -119,19 +117,19 @@ namespace Youtube_Downloader
         {
             var log = GetControl<TextBlock>("Log");
 
-            var basicArgs = "--extract-audio --audio-format mp3 --audio-quality 0";
+            var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
             var splitChapters = GetControl<CheckBox>("SplitChapters");
             if (splitChapters!.IsChecked == true)
             {
-                basicArgs += " --split-chapters";
+                args += " --split-chapters";
                 log.Text += "Split Chapters is ON\n";
             }
 
             var playlist = GetControl<CheckBox>("DownloadPlaylist");
             if (playlist!.IsChecked == true)
             {
-                basicArgs += " --yes-playlist";
+                args += " --yes-playlist";
                 log.Text += "Download Playlist is ON\n";
             }
 
@@ -154,11 +152,11 @@ namespace Youtube_Downloader
             stopwatch.Start();
 
             const string processFileName = "yt-dlp";
-            log.Text += $"Command to run: {processFileName} {basicArgs} {downloadData.FullUrl}\n";
+            log.Text += $"Command to run: {processFileName} {args} {downloadData.FullUrl}\n";
             var processInfo = new ProcessStartInfo()
             {
                 FileName = processFileName,
-                Arguments = $"{basicArgs} {downloadData.FullUrl}",
+                Arguments = $"{args} {downloadData.FullUrl}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
