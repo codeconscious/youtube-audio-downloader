@@ -51,28 +51,34 @@ namespace Youtube_Downloader
                 return;
             }
 
-            // Extract the video ID from user input. IDs or entire URLs are accepted.
-            const string pattern = @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}|(?<=list=)[\w]+";
-
             var urlPart = urlPartTextBox.Text;
 
             if (urlPart is null)
             {
-                log.Text += "ERROR: A URL or video ID must be entered\n";
+                log.Text += "ERROR: A URL or media ID must be entered\n";
                 return;
             }
+
+            var playlist = this.FindControl<CheckBox>("DownloadPlaylist");
+            var downloadPlaylist = playlist?.IsChecked == true;
+
+            // Extract the ID from user input. IDs or entire URLs are accepted.
+            var pattern = downloadPlaylist
+                ? @"(?<=list=)[\w]+"
+                : @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
 
             var match = Regex.Match(urlPart.Trim(), pattern, RegexOptions.Compiled);
             if (!match.Success)
             {
-                log.Text += $"ERROR: ID could not be parsed from \"{urlPart}\"\n";
+                log.Text += $"ERROR: Media ID could not be parsed from \"{urlPart}\"\n";
                 return;
             }
-            var videoId = match.Value;
-            log.Text += "ID parsed OK: " + videoId + "\n";
+
+            var mediaId = match.Value;
+            log.Text += $"{(downloadPlaylist ? "Playlist" : "Video")} ID parsed OK: " + mediaId + "\n";
             // LogText += "ID parsed OK: " + match.Value + "\n";
 
-            var downloadExitCodeOrNull = await DownloadVideoAsync(videoId);
+            var downloadExitCodeOrNull = await DownloadVideoAsync(mediaId, downloadPlaylist);
             if (downloadExitCodeOrNull is null)
             {
                 log.Text += "ERROR: An unexpected error occurred.";
@@ -94,14 +100,17 @@ namespace Youtube_Downloader
             if (string.IsNullOrWhiteSpace(newFileName?.Text))
                 return;
 
-            RenameFile(videoId, saveFolderTextBox.Text, newFileName.Text);
+            RenameFile(mediaId, saveFolderTextBox.Text, newFileName.Text);
             newFileName.Text = string.Empty;
         }
 
-        private async Task<int?> DownloadVideoAsync(string videoId)
+        private async Task<int?> DownloadVideoAsync(string mediaId, bool isPlaylist)
         {
-            var log = this.FindControl<TextBlock>("Log"); // TODO: Do correctly.
-            var fullUrl = $"\"https://www.youtube.com/watch?v={videoId}\"";
+            var log = this.FindControl<TextBlock>("Log");
+
+            var fullUrl = isPlaylist
+                ? $"\"https://www.youtube.com/playlist?list={mediaId}\""
+                : $"\"https://www.youtube.com/watch?v={mediaId}\"";
 
             var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
@@ -163,18 +172,18 @@ namespace Youtube_Downloader
         /// <summary>
         /// Renames a single download file. Does nothing if there are multiple matching files.
         /// </summary>
-        /// <param name="videoId"></param>
+        /// <param name="mediaId"></param>
         /// <param name="directory"></param>
         /// <param name="newFileName"></param>
-        private void RenameFile(string videoId, string directory, string newFileName)
+        private void RenameFile(string mediaId, string directory, string newFileName)
         {
             GuardClauses();
 
             var log = this.FindControl<TextBlock>("Log");
 
-            log.Text += $"Renaming file with video ID \"{videoId}\" to \"{newFileName}\"...\n";
+            log.Text += $"Renaming file with video ID \"{mediaId}\" to \"{newFileName}\"...\n";
 
-            var foundFiles = Directory.EnumerateFiles(directory, $"*{videoId}*").ToList();
+            var foundFiles = Directory.EnumerateFiles(directory, $"*{mediaId}*").ToList();
 
             if (foundFiles.Count == 0)
             {
@@ -185,7 +194,7 @@ namespace Youtube_Downloader
             if (foundFiles.Count > 1)
             {
                 log.Text += "ERROR: Cannot rename multiple files (yet).\n";
-                log.Text += $"{foundFiles.Count} files containing \"{videoId}\" in their names were found:\n";
+                log.Text += $"{foundFiles.Count} files containing \"{mediaId}\" in their names were found:\n";
                 foundFiles.ForEach(f => log.Text += "- " + f + "\n");
                 return;
             }
@@ -206,7 +215,7 @@ namespace Youtube_Downloader
 
             void GuardClauses()
             {
-                if (string.IsNullOrWhiteSpace(videoId))
+                if (string.IsNullOrWhiteSpace(mediaId))
                     throw new InvalidOperationException();
             }
         }
