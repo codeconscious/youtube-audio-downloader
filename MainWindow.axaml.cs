@@ -67,25 +67,19 @@ namespace Youtube_Downloader
             }
 
             var playlistControl = GetControl<CheckBox>("DownloadPlaylist");
-            var isPlaylistChecked = playlistControl?.IsChecked == true;
+            Download downloadInfo = playlistControl!.IsChecked == true
+                ? new PlaylistDownload(urlPart)
+                : new VideoDownload(urlPart);
 
-            // Extract the ID from user input. IDs or entire URLs are accepted.
-            var pattern = isPlaylistChecked
-                ? @"(?<=list=)[\w]+"
-                : @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
-
-            var match = Regex.Match(urlPart.Trim(), pattern, RegexOptions.Compiled);
-            if (!match.Success)
+            if (!downloadInfo.ParsedData.ParsedSuccessfully)
             {
-                log.Text += $"ERROR: Media ID could not be parsed from \"{urlPart}\"\n";
+                log.Text += $"ERROR: {downloadInfo.Name} media ID could not be parsed from \"{urlPart}\"\n";
                 return;
             }
 
-            var mediaId = match.Value;
-            log.Text += $"{(isPlaylistChecked ? "Playlist" : "Video")} ID parsed OK: " + mediaId + "\n";
-            // LogText += "ID parsed OK: " + match.Value + "\n";
+            log.Text += $"{downloadInfo.Name} media ID parsed OK: " + downloadInfo.ParsedData.Id + "\n";
 
-            var downloadExitCodeOrNull = await DownloadVideoAsync(mediaId, isPlaylistChecked);
+            var downloadExitCodeOrNull = await DownloadVideoAsync(downloadInfo);
             if (downloadExitCodeOrNull is null)
             {
                 log.Text += "ERROR: An unexpected error occurred.";
@@ -107,32 +101,27 @@ namespace Youtube_Downloader
             if (string.IsNullOrWhiteSpace(newFileName?.Text))
                 return;
 
-            RenameFile(mediaId, saveFolderTextBox.Text, newFileName.Text);
+            RenameFile(downloadInfo.ParsedData.Id!, saveFolderTextBox.Text, newFileName.Text);
             newFileName.Text = string.Empty;
         }
 
-        private async Task<int?> DownloadVideoAsync(string mediaId, bool isPlaylist)
+        private async Task<int?> DownloadVideoAsync(Download downloadData)
         {
             var log = GetControl<TextBlock>("Log");
 
-            // TODO: Create classes to replace all these conditionals with polymorphism.
-            var fullUrl = isPlaylist
-                ? $"\"https://www.youtube.com/playlist?list={mediaId}\""
-                : $"\"https://www.youtube.com/watch?v={mediaId}\"";
-
-            var args = "--extract-audio --audio-format mp3 --audio-quality 0";
+            var basicArgs = "--extract-audio --audio-format mp3 --audio-quality 0";
 
             var splitChapters = GetControl<CheckBox>("SplitChapters");
-            if (splitChapters?.IsChecked == true)
+            if (splitChapters!.IsChecked == true)
             {
-                args += " --split-chapters";
+                basicArgs += " --split-chapters";
                 log.Text += "Split Chapters is ON\n";
             }
 
             var playlist = GetControl<CheckBox>("DownloadPlaylist");
-            if (playlist?.IsChecked == true)
+            if (playlist!.IsChecked == true)
             {
-                args += " --yes-playlist";
+                basicArgs += " --yes-playlist";
                 log.Text += "Download Playlist is ON\n";
             }
 
@@ -143,23 +132,23 @@ namespace Youtube_Downloader
                 log.Text += "ERROR: You must enter a folder path.\n";
                 return null;
             }
-            if (!Directory.Exists(saveFolderTextBox.Text.Trim()))
+            directory = saveFolderTextBox.Text.Trim();
+            if (!Directory.Exists(directory))
             {
                 log.Text += $"ERROR: Could not find directory \"{saveFolderTextBox.Text.Trim()}\"\n";
                 return null;
             }
-            directory = saveFolderTextBox.Text.Trim();
             log.Text += $"Will save to directory \"{directory}\"\n";
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             const string processFileName = "yt-dlp";
-            log.Text += $"Command to run: {processFileName} {args} {fullUrl}\n";
+            log.Text += $"Command to run: {processFileName} {basicArgs} {downloadData.FullUrl}\n";
             var processInfo = new ProcessStartInfo()
             {
                 FileName = processFileName,
-                Arguments = $"{args} {fullUrl}",
+                Arguments = $"{basicArgs} {downloadData.FullUrl}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
@@ -224,7 +213,25 @@ namespace Youtube_Downloader
             void GuardClauses()
             {
                 if (string.IsNullOrWhiteSpace(mediaId))
-                    throw new InvalidOperationException();
+                {
+                    throw new InvalidOperationException(
+                        "A media ID must be provided."
+                    );
+                }
+
+                if (string.IsNullOrWhiteSpace(directory))
+                {
+                    throw new InvalidOperationException(
+                        "A directory must be provided."
+                    );
+                }
+
+                if (string.IsNullOrWhiteSpace(newFileName))
+                {
+                    throw new InvalidOperationException(
+                        "A new file name must be provided."
+                    );
+                }
             }
         }
     }
