@@ -9,6 +9,8 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using System.Threading.Tasks;
 
+// Technically, the external download tool handles far more than just YouTube.
+// I might add wider support at some point, but I have no need right now.
 namespace Youtube_Downloader
 {
     public partial class MainWindow : Window
@@ -35,6 +37,9 @@ namespace Youtube_Downloader
             }
         }
 
+        /// <summary>
+        /// Gets a control, given its name and type; otherwise, throws.
+        /// </summary>
         private T GetControl<T>(string name) where T : class, IControl
         {
             return this.FindControl<T>(name)
@@ -79,7 +84,7 @@ namespace Youtube_Downloader
 
             log.Text += $"{downloadInfo.Name} media ID parsed OK: " + downloadInfo.ParsedData.Id + "\n";
 
-            var downloadExitCodeOrNull = await DownloadVideoAsync(downloadInfo);
+            var downloadExitCodeOrNull = await DownloadMediaAsync(downloadInfo);
             if (downloadExitCodeOrNull is null)
             {
                 log.Text += "ERROR: An unexpected error occurred.";
@@ -105,7 +110,12 @@ namespace Youtube_Downloader
             newFileName.Text = string.Empty;
         }
 
-        private async Task<int?> DownloadVideoAsync(Download downloadData)
+        /// <summary>
+        /// Arranges download settings, then calls the external program
+        /// to download media data locally.
+        /// </summary>
+        /// <returns>A return code from the external program.</returns>
+        private async Task<int?> DownloadMediaAsync(Download downloadData)
         {
             var log = GetControl<TextBlock>("Log");
 
@@ -167,7 +177,8 @@ namespace Youtube_Downloader
         }
 
         /// <summary>
-        /// Renames a single download file. Does nothing if there are multiple matching files.
+        /// Renames a single download file as specified.
+        /// Does nothing (yet) if there are multiple matching files.
         /// </summary>
         /// <param name="mediaId"></param>
         /// <param name="directory"></param>
