@@ -35,6 +35,16 @@ namespace Youtube_Downloader
             }
         }
 
+        private T GetControlOrThrow<T>(string name) where T : class, IControl
+        {
+            var control = this.FindControl<T>(name);
+
+            if (control is null)
+                throw new InvalidOperationException($"Could not find control {name}.");
+
+            return control;
+        }
+
         private async void OnDownloadButton_Click(object sender, RoutedEventArgs e)
         {
             var urlPartTextBox = this.FindControl<TextBox>("Url");
