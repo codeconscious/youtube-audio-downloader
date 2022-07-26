@@ -29,32 +29,29 @@ namespace Youtube_Downloader
                 var pathData = File.ReadAllText(fileContainingSavePath).Trim();
                 if (Directory.Exists(pathData))
                 {
-                    var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
+                    var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
                     saveFolderTextBox.Text = pathData;
                 }
             }
         }
 
-        private T GetControlOrThrow<T>(string name) where T : class, IControl
+        private T GetControl<T>(string name) where T : class, IControl
         {
-            var control = this.FindControl<T>(name);
-
-            if (control is null)
-                throw new InvalidOperationException($"Could not find control {name}.");
-
-            return control;
+            return this.FindControl<T>(name)
+                ?? throw new InvalidOperationException(
+                    $"Could not find control \"{name}\" of type {typeof(T).FullName}.");
         }
 
         private async void OnDownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            var urlPartTextBox = this.FindControl<TextBox>("Url");
-            var log = this.FindControl<TextBlock>("Log");
+            var urlPartTextBox = GetControl<TextBox>("Url");
+            var log = GetControl<TextBlock>("Log");
             log.Text = string.Empty;
             // TODO: Get binding working.
-            // var log = this.FindControl<TextBox>("Log");
+            // var log = GetControlOrThrow<TextBox>("Log");
             // LogText += $"Started at {System.DateTime.Now}...\n";
 
-            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
+            var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
                 log.Text += "ERROR: An output directory must be entered\n";
@@ -69,11 +66,11 @@ namespace Youtube_Downloader
                 return;
             }
 
-            var playlist = this.FindControl<CheckBox>("DownloadPlaylist");
-            var downloadPlaylist = playlist?.IsChecked == true;
+            var playlistControl = GetControl<CheckBox>("DownloadPlaylist");
+            var isPlaylistChecked = playlistControl?.IsChecked == true;
 
             // Extract the ID from user input. IDs or entire URLs are accepted.
-            var pattern = downloadPlaylist
+            var pattern = isPlaylistChecked
                 ? @"(?<=list=)[\w]+"
                 : @"^[\w|-]{11}$|(?<=v=)[\w|-]{11}|(?<=youtu\.be\/).{11}";
 
@@ -85,10 +82,10 @@ namespace Youtube_Downloader
             }
 
             var mediaId = match.Value;
-            log.Text += $"{(downloadPlaylist ? "Playlist" : "Video")} ID parsed OK: " + mediaId + "\n";
+            log.Text += $"{(isPlaylistChecked ? "Playlist" : "Video")} ID parsed OK: " + mediaId + "\n";
             // LogText += "ID parsed OK: " + match.Value + "\n";
 
-            var downloadExitCodeOrNull = await DownloadVideoAsync(mediaId, downloadPlaylist);
+            var downloadExitCodeOrNull = await DownloadVideoAsync(mediaId, isPlaylistChecked);
             if (downloadExitCodeOrNull is null)
             {
                 log.Text += "ERROR: An unexpected error occurred.";
@@ -106,7 +103,7 @@ namespace Youtube_Downloader
             }
 
             // Rename, if requested.
-            var newFileName = this.FindControl<TextBox>("FileName");
+            var newFileName = GetControl<TextBox>("FileName");
             if (string.IsNullOrWhiteSpace(newFileName?.Text))
                 return;
 
@@ -116,7 +113,7 @@ namespace Youtube_Downloader
 
         private async Task<int?> DownloadVideoAsync(string mediaId, bool isPlaylist)
         {
-            var log = this.FindControl<TextBlock>("Log");
+            var log = GetControl<TextBlock>("Log");
 
             // TODO: Create classes to replace all these conditionals with polymorphism.
             var fullUrl = isPlaylist
@@ -125,14 +122,14 @@ namespace Youtube_Downloader
 
             var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
-            var splitChapters = this.FindControl<CheckBox>("SplitChapters");
+            var splitChapters = GetControl<CheckBox>("SplitChapters");
             if (splitChapters?.IsChecked == true)
             {
                 args += " --split-chapters";
                 log.Text += "Split Chapters is ON\n";
             }
 
-            var playlist = this.FindControl<CheckBox>("DownloadPlaylist");
+            var playlist = GetControl<CheckBox>("DownloadPlaylist");
             if (playlist?.IsChecked == true)
             {
                 args += " --yes-playlist";
@@ -140,7 +137,7 @@ namespace Youtube_Downloader
             }
 
             string directory;
-            var saveFolderTextBox = this.FindControl<TextBox>("SaveFolder");
+            var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
                 log.Text += "ERROR: You must enter a folder path.\n";
@@ -190,7 +187,7 @@ namespace Youtube_Downloader
         {
             GuardClauses();
 
-            var log = this.FindControl<TextBlock>("Log");
+            var log = GetControl<TextBlock>("Log");
 
             log.Text += $"Renaming file with video ID \"{mediaId}\" to \"{newFileName}\"...\n";
 
