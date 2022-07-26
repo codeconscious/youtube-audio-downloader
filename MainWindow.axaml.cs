@@ -108,6 +108,7 @@ namespace Youtube_Downloader
         {
             var log = this.FindControl<TextBlock>("Log");
 
+            // TODO: Create classes to replace all these conditionals with polymorphism.
             var fullUrl = isPlaylist
                 ? $"\"https://www.youtube.com/playlist?list={mediaId}\""
                 : $"\"https://www.youtube.com/watch?v={mediaId}\"";
