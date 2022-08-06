@@ -152,7 +152,7 @@ namespace YoutubeDownloader
             stopwatch.Start();
 
             const string processFileName = "yt-dlp";
-            log.Text += $"Command to run: {processFileName} {args} {downloadData.FullUrl}\n";
+            log.Text += $"Running command: {processFileName} {args} {downloadData.FullUrl}\n";
             var processInfo = new ProcessStartInfo()
             {
                 FileName = processFileName,
