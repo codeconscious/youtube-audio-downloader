@@ -10,7 +10,11 @@ Feel free to use it, but please do so responsibly!
 
 ## Prerequisites
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
-- .NET 6
+- .NET 7
+
+## Getting Started
+
+Use `dotnet run` to start the program manually.
 
 ## TODO
 
