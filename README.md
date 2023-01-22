@@ -9,8 +9,8 @@ It's a work in (occasional) progress, is rather rough around the edges, and curr
 Feel free to use it, but please do so responsibly!
 
 ## Prerequisites
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - .NET 7
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 
 ## Getting Started
 
