@@ -9,8 +9,12 @@ It's a work in (occasional) progress, is rather rough around the edges, and curr
 Feel free to use it, but please do so responsibly!
 
 ## Prerequisites
+- .NET 7
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
-- .NET 6
+
+## Getting Started
+
+Use `dotnet run` to start the program manually.
 
 ## TODO
 
