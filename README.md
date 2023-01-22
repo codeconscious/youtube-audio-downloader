@@ -8,6 +8,8 @@ It's a work in (occasional) progress, is rather rough around the edges, and curr
 
 Feel free to use it, but please do so responsibly!
 
+If you have Ruby installed on your system, check out [my Ruby-powered CLI version](https://github.com/codeconscious/youtube-audio-downloader-ruby/) as well. I've been working on it more these days, so has more features at this point.
+
 ## Prerequisites
 - .NET 7
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
