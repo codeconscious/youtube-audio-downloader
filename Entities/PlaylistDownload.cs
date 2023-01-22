@@ -1,14 +1,10 @@
-using System.Text.RegularExpressions;
-
 namespace YoutubeDownloader.Entities;
 
 public sealed class PlaylistDownload : Download
 {
-    public override string Name => "Playlist";
-    public static string Pattern => @"(?<=list=)[\w\-]+";
-    public static  string UrlBase => "https://www.youtube.com/playlist?list=";
+    public new static string Name => "Playlist";
+    public new static string Pattern => @"(?<=list=)[\w\-]+";
+    public new static string UrlBase => "https://www.youtube.com/playlist?list=";
 
-    public PlaylistDownload(string urlPart) : base(urlPart, Pattern)
-    {
-    }
+    public PlaylistDownload(string urlPart) : base(urlPart, Pattern) { }
 }
