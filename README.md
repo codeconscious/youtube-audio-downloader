@@ -20,5 +20,5 @@ Use `dotnet run` to start the program manually.
 
 ## TODO
 
-- Better UI responsiveness during long operations
+- Better UI responsiveness during long operations ([issue #5](https://github.com/codeconscious/youtube-audio-downloader/issues/5))
 - Check into Asian language support
