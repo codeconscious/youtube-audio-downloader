@@ -1,4 +1,8 @@
-# Youtube Audio Downloader
+**This unfinished tool is no longer under active development. I highly recommend you use its replacement, [CCVTAC](https://github.com/codeconscious/ccvtac), which is a far more developed command line utility.**
+
+-----
+
+# YouTube Audio Downloader
 
 This is a very simple UI wrapper for [yt-dlp](https://github.com/yt-dlp/yt-dlp) using [Avalonia](https://avaloniaui.net/) and C# that I created to get some practice with Avalonia. It provides a straightforward UI to more easily extract MP3 files from specified YouTube videos.
 
@@ -8,10 +12,8 @@ It's a work in (occasional) progress, is rather rough around the edges, and curr
 
 Feel free to use it, but please do so responsibly!
 
-If you have Ruby installed on your system, check out [my Ruby-powered CLI version](https://github.com/codeconscious/youtube-audio-downloader-ruby/) as well. I've been working on it more these days, so has more features at this point.
-
 ## Prerequisites
-- .NET 7
+- .NET 8 runtime
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 
 ## Getting Started
