@@ -32,29 +32,19 @@ namespace YoutubeDownloader
                 var pathData = File.ReadAllText(fileContainingSavePath).Trim();
                 if (Directory.Exists(pathData))
                 {
-                    var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
+                    var saveFolderTextBox = SaveFolder;
                     saveFolderTextBox.Text = pathData;
                 }
             }
         }
 
-        /// <summary>
-        /// Gets a control, given its name and type; otherwise, throws.
-        /// </summary>
-        private T GetControl<T>(string name) where T : class, IControl
-        {
-            return this.FindControl<T>(name)
-                ?? throw new InvalidOperationException(
-                    $"Could not find control \"{name}\" of type {typeof(T).FullName}.");
-        }
-
         private async void OnDownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            var urlPartTextBox = GetControl<TextBox>("Url");
-            var log = GetControl<TextBlock>("Log");
+            var urlPartTextBox = Url;
+            var log = Log;
             log.Text = string.Empty;
 
-            var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
+            var saveFolderTextBox = SaveFolder;
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
                 log.Text += "ERROR: An output directory must be entered\n";
@@ -69,7 +59,7 @@ namespace YoutubeDownloader
                 return;
             }
 
-            var playlistControl = GetControl<CheckBox>("DownloadPlaylist");
+            var playlistControl = DownloadPlaylist;
             Download downloadInfo = playlistControl!.IsChecked == true
                 ? new PlaylistDownload(urlPart)
                 : new VideoDownload(urlPart);
@@ -100,7 +90,7 @@ namespace YoutubeDownloader
             }
 
             // Rename, if requested.
-            var newFileName = GetControl<TextBox>("FileName");
+            var newFileName = FileName;
             if (string.IsNullOrWhiteSpace(newFileName?.Text))
                 return;
 
@@ -115,18 +105,18 @@ namespace YoutubeDownloader
         /// <returns>A return code from the external program.</returns>
         private async Task<int?> DownloadMediaAsync(Download downloadData)
         {
-            var log = GetControl<TextBlock>("Log");
+            var log = Log;
 
             var args = "--extract-audio --audio-format mp3 --audio-quality 0";
 
-            var splitChapters = GetControl<CheckBox>("SplitChapters");
+            var splitChapters = SplitChapters;
             if (splitChapters!.IsChecked == true)
             {
                 args += " --split-chapters";
                 log.Text += "Split Chapters is ON\n";
             }
 
-            var playlist = GetControl<CheckBox>("DownloadPlaylist");
+            var playlist = DownloadPlaylist;
             if (playlist!.IsChecked == true)
             {
                 args += " --yes-playlist";
@@ -134,7 +124,7 @@ namespace YoutubeDownloader
             }
 
             string directory;
-            var saveFolderTextBox = GetControl<TextBox>("SaveFolder");
+            var saveFolderTextBox = SaveFolder;
             if (string.IsNullOrWhiteSpace(saveFolderTextBox.Text))
             {
                 log.Text += "ERROR: You must enter a folder path.\n";
@@ -185,7 +175,7 @@ namespace YoutubeDownloader
         {
             GuardClauses();
 
-            var log = GetControl<TextBlock>("Log");
+            var log = Log;
 
             log.Text += $"Renaming file with video ID \"{mediaId}\" to \"{newFileName}\"...\n";
 
