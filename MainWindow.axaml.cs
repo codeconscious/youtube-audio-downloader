@@ -57,10 +57,7 @@ namespace YouTubeDownloader
                 return;
             }
 
-            var playlistControl = DownloadPlaylist;
-            Download downloadInfo = playlistControl!.IsChecked == true
-                ? new PlaylistDownload(urlPart)
-                : new VideoDownload(urlPart);
+            Download downloadInfo = new VideoDownload(urlPart);
 
             if (!downloadInfo.ParsedData.ParsedSuccessfully)
             {
@@ -114,12 +111,12 @@ namespace YouTubeDownloader
                 log.Text += "Split Chapters is ON\n";
             }
 
-            var playlist = DownloadPlaylist;
-            if (playlist!.IsChecked == true)
-            {
-                args += " --yes-playlist";
-                log.Text += "Download Playlist is ON\n";
-            }
+            // TODO: Make this automatic.
+            // if (playlist!.IsChecked == true)
+            // {
+            //     args += " --yes-playlist";
+            //     log.Text += "Download Playlist is ON\n";
+            // }
 
             string directory;
             var saveFolderTextBox = SaveFolder;
