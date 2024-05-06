@@ -83,14 +83,6 @@ namespace YouTubeDownloader
                 log.Text += $"ERROR: Could not download the video (error code {downloadExitCodeOrNull.ToString() ?? "unknown"}).\n\n";
                 return;
             }
-
-            // Rename, if requested.
-            var newFileName = FileName;
-            if (string.IsNullOrWhiteSpace(newFileName?.Text))
-                return;
-
-            RenameFile(downloadInfo.ParsedData.Id!, saveFolderTextBox.Text, newFileName.Text);
-            newFileName.Text = string.Empty;
         }
 
         /// <summary>
@@ -157,76 +149,6 @@ namespace YouTubeDownloader
             process.WaitForExit();
             log.Text += $"Done in {stopwatch.ElapsedMilliseconds:#,##0}ms\n";
             return process.ExitCode;
-        }
-
-        /// <summary>
-        /// Renames a single download file as specified.
-        /// Does nothing (yet) if there are multiple matching files.
-        /// </summary>
-        /// <param name="mediaId"></param>
-        /// <param name="directory"></param>
-        /// <param name="newFileName"></param>
-        private void RenameFile(string mediaId, string directory, string newFileName)
-        {
-            GuardClauses();
-
-            var log = Log;
-
-            log.Text += $"Renaming file with video ID \"{mediaId}\" to \"{newFileName}\"...\n";
-
-            var foundFiles = Directory.EnumerateFiles(directory, $"*{mediaId}*").ToList();
-
-            if (foundFiles.Count == 0)
-            {
-                log.Text += $"No file to rename was found in \"{directory}\"\n";
-                return;
-            }
-
-            if (foundFiles.Count > 1)
-            {
-                log.Text += "ERROR: Cannot rename multiple files (yet).\n";
-                log.Text += $"{foundFiles.Count} files containing \"{mediaId}\" in their names were found:\n";
-                foundFiles.ForEach(f => log.Text += "- " + f + "\n");
-                return;
-            }
-
-            try
-            {
-                File.Move(foundFiles[0],
-                          Path.Combine(directory, newFileName) + Path.GetExtension(foundFiles[0]),
-                          overwrite: false);
-            }
-            catch (Exception ex)
-            {
-                 log.Text += $"RENAMING ERROR: {ex.Message}\n";
-                 return;
-            }
-
-            log.Text += "Rename OK!\n";
-
-            void GuardClauses()
-            {
-                if (string.IsNullOrWhiteSpace(mediaId))
-                {
-                    throw new InvalidOperationException(
-                        "A media ID must be provided."
-                    );
-                }
-
-                if (string.IsNullOrWhiteSpace(directory))
-                {
-                    throw new InvalidOperationException(
-                        "A directory must be provided."
-                    );
-                }
-
-                if (string.IsNullOrWhiteSpace(newFileName))
-                {
-                    throw new InvalidOperationException(
-                        "A new file name must be provided."
-                    );
-                }
-            }
         }
     }
 }
