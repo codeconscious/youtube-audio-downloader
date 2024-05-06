@@ -8,11 +8,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using System.Threading.Tasks;
-using YoutubeDownloader.Entities;
+using YouTubeDownloader.Entities;
 
-// Technically, the external download tool handles far more than just YouTube.
-// I might add wider support at some point, but I have no need right now.
-namespace YoutubeDownloader
+namespace YouTubeDownloader
 {
     public partial class MainWindow : Window
     {

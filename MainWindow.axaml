@@ -3,8 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" SizeToContent="0" Width="900" Height="400" MinWidth="700" MinHeight="300"
-        x:Class="YoutubeDownloader.MainWindow"
-        Title="YouTube Audio Downloader" Icon="icon.png">
+        x:Class="YouTubeDownloader.MainWindow"
+        Title="YouTube Downloader" Icon="icon.png">
 
     <Grid RowDefinitions="50,50,50,50,Auto" Margin="20">
 
@@ -12,7 +12,7 @@
             <Button Width="130" Foreground="White" Background="Black" Click="OnDownloadButton_Click"
                     HorizontalContentAlignment="Center" DockPanel.Dock="Right"
                     Margin="5,0,0,0">Download</Button>
-            <TextBox Height="20" Watermark="Enter a YouTube URL or video ID"
+            <TextBox Height="20" Watermark="Enter a YouTube video URL"
                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="Url" />
         </DockPanel>
 
