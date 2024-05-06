@@ -9,6 +9,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using System.Threading.Tasks;
 using YouTubeDownloader.Entities;
+using System.Text;
 
 namespace YouTubeDownloader
 {
@@ -90,23 +91,31 @@ namespace YouTubeDownloader
         /// to download media data locally.
         /// </summary>
         /// <returns>A return code from the external program.</returns>
-        private async Task<int?> DownloadMediaAsync(Download downloadData)
+        private async Task<int?> DownloadMediaAsync(Download downloadData, bool audioOnly = false)
         {
             var log = Log;
+            StringBuilder args = new();
 
-            var args = "--extract-audio --audio-format mp3 --audio-quality 0";
+            if (audioOnly)
+            {
+                args.Append("--extract-audio --audio-format mp3 --audio-quality 0");
+            }
+            else
+            {
+                args.Append("""-f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" """);
+            }
 
             var splitChapters = SplitChapters;
             if (splitChapters!.IsChecked == true)
             {
-                args += " --split-chapters";
+                args.Append(" --split-chapters");
                 log.Text += "Split Chapters is ON\n";
             }
 
             // TODO: Make this automatic.
             // if (playlist!.IsChecked == true)
             // {
-            //     args += " --yes-playlist";
+            //     args.Append(" --yes-playlist");
             //     log.Text += "Download Playlist is ON\n";
             // }
 
