@@ -8,11 +8,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using System.Threading.Tasks;
-using YoutubeDownloader.Entities;
+using YouTubeDownloader.Entities;
+using System.Text;
 
-// Technically, the external download tool handles far more than just YouTube.
-// I might add wider support at some point, but I have no need right now.
-namespace YoutubeDownloader
+namespace YouTubeDownloader
 {
     public partial class MainWindow : Window
     {
@@ -59,10 +58,7 @@ namespace YoutubeDownloader
                 return;
             }
 
-            var playlistControl = DownloadPlaylist;
-            Download downloadInfo = playlistControl!.IsChecked == true
-                ? new PlaylistDownload(urlPart)
-                : new VideoDownload(urlPart);
+            Download downloadInfo = new VideoDownload(urlPart);
 
             if (!downloadInfo.ParsedData.ParsedSuccessfully)
             {
@@ -88,14 +84,6 @@ namespace YoutubeDownloader
                 log.Text += $"ERROR: Could not download the video (error code {downloadExitCodeOrNull.ToString() ?? "unknown"}).\n\n";
                 return;
             }
-
-            // Rename, if requested.
-            var newFileName = FileName;
-            if (string.IsNullOrWhiteSpace(newFileName?.Text))
-                return;
-
-            RenameFile(downloadInfo.ParsedData.Id!, saveFolderTextBox.Text, newFileName.Text);
-            newFileName.Text = string.Empty;
         }
 
         /// <summary>
@@ -103,25 +91,33 @@ namespace YoutubeDownloader
         /// to download media data locally.
         /// </summary>
         /// <returns>A return code from the external program.</returns>
-        private async Task<int?> DownloadMediaAsync(Download downloadData)
+        private async Task<int?> DownloadMediaAsync(Download downloadData, bool audioOnly = false)
         {
             var log = Log;
+            StringBuilder args = new();
 
-            var args = "--extract-audio --audio-format mp3 --audio-quality 0";
+            if (audioOnly)
+            {
+                args.Append("--extract-audio --audio-format mp3 --audio-quality 0");
+            }
+            else
+            {
+                args.Append("""-f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" """);
+            }
 
             var splitChapters = SplitChapters;
             if (splitChapters!.IsChecked == true)
             {
-                args += " --split-chapters";
+                args.Append(" --split-chapters");
                 log.Text += "Split Chapters is ON\n";
             }
 
-            var playlist = DownloadPlaylist;
-            if (playlist!.IsChecked == true)
-            {
-                args += " --yes-playlist";
-                log.Text += "Download Playlist is ON\n";
-            }
+            // TODO: Make this automatic.
+            // if (playlist!.IsChecked == true)
+            // {
+            //     args.Append(" --yes-playlist");
+            //     log.Text += "Download Playlist is ON\n";
+            // }
 
             string directory;
             var saveFolderTextBox = SaveFolder;
@@ -162,76 +158,6 @@ namespace YoutubeDownloader
             process.WaitForExit();
             log.Text += $"Done in {stopwatch.ElapsedMilliseconds:#,##0}ms\n";
             return process.ExitCode;
-        }
-
-        /// <summary>
-        /// Renames a single download file as specified.
-        /// Does nothing (yet) if there are multiple matching files.
-        /// </summary>
-        /// <param name="mediaId"></param>
-        /// <param name="directory"></param>
-        /// <param name="newFileName"></param>
-        private void RenameFile(string mediaId, string directory, string newFileName)
-        {
-            GuardClauses();
-
-            var log = Log;
-
-            log.Text += $"Renaming file with video ID \"{mediaId}\" to \"{newFileName}\"...\n";
-
-            var foundFiles = Directory.EnumerateFiles(directory, $"*{mediaId}*").ToList();
-
-            if (foundFiles.Count == 0)
-            {
-                log.Text += $"No file to rename was found in \"{directory}\"\n";
-                return;
-            }
-
-            if (foundFiles.Count > 1)
-            {
-                log.Text += "ERROR: Cannot rename multiple files (yet).\n";
-                log.Text += $"{foundFiles.Count} files containing \"{mediaId}\" in their names were found:\n";
-                foundFiles.ForEach(f => log.Text += "- " + f + "\n");
-                return;
-            }
-
-            try
-            {
-                File.Move(foundFiles[0],
-                          Path.Combine(directory, newFileName) + Path.GetExtension(foundFiles[0]),
-                          overwrite: false);
-            }
-            catch (Exception ex)
-            {
-                 log.Text += $"RENAMING ERROR: {ex.Message}\n";
-                 return;
-            }
-
-            log.Text += "Rename OK!\n";
-
-            void GuardClauses()
-            {
-                if (string.IsNullOrWhiteSpace(mediaId))
-                {
-                    throw new InvalidOperationException(
-                        "A media ID must be provided."
-                    );
-                }
-
-                if (string.IsNullOrWhiteSpace(directory))
-                {
-                    throw new InvalidOperationException(
-                        "A directory must be provided."
-                    );
-                }
-
-                if (string.IsNullOrWhiteSpace(newFileName))
-                {
-                    throw new InvalidOperationException(
-                        "A new file name must be provided."
-                    );
-                }
-            }
         }
     }
 }

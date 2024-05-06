@@ -1,4 +1,4 @@
-namespace YoutubeDownloader.Entities;
+namespace YouTubeDownloader.Entities;
 
 public sealed class PlaylistDownload : Download
 {

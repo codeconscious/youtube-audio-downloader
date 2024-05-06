@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace YoutubeDownloader.Entities;
+namespace YouTubeDownloader.Entities;
 
 public abstract class Download
 {
